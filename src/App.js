@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import Canvas from './Canvas';
 import drawAnalyserGraph from './DrawAnalyserGraph';
 
@@ -29,16 +29,14 @@ oscillator.connect(gainNode);
 gainNode.connect(analyser);
 analyser.connect(audioContext.destination);
 gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-
-function init() {
-  oscillator.start();
-}
+oscillator.start();
 
 function App() {
   const [isOn, setOnOff] = useState(false);
 
   function play() {
     console.log(isOn);
+    audioContext.resume();
     if (!isOn)
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
     else
@@ -58,7 +56,6 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={init}>Init</button>
       <button onClick={play}>Play</button>
       <Canvas height="50" width="300" draw={drawTimeDomainData}/>
       <Canvas height="50" width="300" draw={drawFreqDomainData}/>

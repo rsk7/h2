@@ -1,7 +1,18 @@
 import { useRef, useEffect } from 'react';
 
-function Canvas(props) {
+function fixDevicePixelRatio(canvas) {
+  const { width, height } = canvas.getBoundingClientRect();
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+  const scale = window.devicePixelRatio;
+  canvas.width = Math.floor(width * scale);
+  canvas.height = Math.floor(height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+  return { ctx, width, height };
+}
 
+function Canvas(props) {
   const { draw, ...rest } = props;
   const canvasRef = useRef(null);
 
@@ -9,8 +20,10 @@ function Canvas(props) {
     const canvas = canvasRef.current;
     let animationFrameId;
 
+
     const render = () => {
-      draw(canvas);
+      const { ctx, width, height } = fixDevicePixelRatio(canvas);
+      draw(ctx, width, height);
       animationFrameId = window.requestAnimationFrame(render);
     };
 
